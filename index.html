@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>翻訳デモ</title>
+</head>
+<body>
+  <h1>🌍 翻訳アプリ</h1>
+  <textarea id="text" rows="4" cols="50" placeholder="翻訳したい文章を入力..."></textarea><br><br>
+
+  <select id="lang">
+    <option value="en">英語</option>
+    <option value="fr">フランス語</option>
+    <option value="zh">中国語</option>
+    <option value="ko">韓国語</option>
+  </select>
+  <button onclick="translateText()">翻訳する</button>
+
+  <h3>翻訳結果：</h3>
+  <p id="result"></p>
+
+  <script>
+async function translateText() {
+  const text = document.getElementById("text").value;
+  const target = document.getElementById("lang").value;
+
+  const res = await fetch(
+    "https://translation.googleapis.com/language/translate/v2?key=AIzaSyCGQRHrNfvFJU9oMYn_zEtfTlO-IkGuyHo",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ q: text, target: target })
+    }
+  );
+
+  const data = await res.json();
+
+  // 👇 HTMLエスケープ解除用関数
+  function decodeHtml(html) {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  }
+
+  const translated = data.data.translations[0].translatedText;
+  document.getElementById("result").innerText = decodeHtml(translated);
+}
+
+  </script>
+</body>
+</html>
